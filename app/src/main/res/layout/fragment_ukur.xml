@@ -15,8 +15,8 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:layout_editor_absoluteX="-201dp"
-            tools:layout_editor_absoluteY="-148dp">
+            tools:layout_editor_absoluteX="164dp"
+            tools:layout_editor_absoluteY="156dp">
 
             <EditText
                 android:id="@+id/editTxtUsia"
