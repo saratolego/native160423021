@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">SatuKelompok_ANMP_ProjectUTS</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="judul_ukur">Ukur Berat dan Tinggi Badan</string>
+    <string name="judul_data">Data Berat dan Tinggi Badan</string>
+    <string name="judul_profil">Profil Anak</string>
 </resources>

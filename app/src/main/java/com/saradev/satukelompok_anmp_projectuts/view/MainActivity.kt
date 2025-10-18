@@ -1,15 +1,12 @@
-package com.saradev.satukelompok_anmp_projectuts
+package com.saradev.satukelompok_anmp_projectuts.view
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 import com.saradev.satukelompok_anmp_projectuts.databinding.ActivityMainBinding
-import androidx.navigation.ui.setupWithNavController
+import com.saradev.satukelompok_anmp_projectuts.R
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -20,10 +17,16 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-        val navHostFragment = supportFragmentManager
-            .findFragmentById(R.id.navHost) as NavHostFragment
-        val navController = navHostFragment.navController
+            navController = (supportFragmentManager.findFragmentById(R.id.hostFragment) as NavHostFragment).navController
+        setSupportActionBar(binding.toolbar)
 
+        NavigationUI.setupActionBarWithNavController(this, navController, binding.drawerLayout)
+        NavigationUI.setupWithNavController(binding.navView, navController)
         binding.buttomNav.setupWithNavController(navController)
     }
+    override fun onSupportNavigateUp(): Boolean {
+        return NavigationUI.navigateUp(navController, binding.drawerLayout)
+                || super.onSupportNavigateUp()
+    }
+
 }

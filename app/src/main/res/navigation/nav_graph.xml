@@ -7,17 +7,17 @@
 
     <fragment
         android:id="@+id/itemUkur"
-        android:name="com.saradev.satukelompok_anmp_projectuts.FragmentUkur"
-        android:label="fragment_ukur"
+        android:name="com.saradev.satukelompok_anmp_projectuts.view.FragmentUkur"
+        android:label="@string/judul_ukur"
         tools:layout="@layout/fragment_ukur" />
     <fragment
         android:id="@+id/itemData"
-        android:name="com.saradev.satukelompok_anmp_projectuts.FragmentData"
-        android:label="fragment_data"
+        android:name="com.saradev.satukelompok_anmp_projectuts.view.FragmentData"
+        android:label="@string/judul_data"
         tools:layout="@layout/fragment_data" />
     <fragment
         android:id="@+id/itemProfile"
-        android:name="com.saradev.satukelompok_anmp_projectuts.FragmentProfilAnak"
-        android:label="fragment_profil_anak"
+        android:name="com.saradev.satukelompok_anmp_projectuts.view.FragmentProfilAnak"
+        android:label="@string/judul_profil"
         tools:layout="@layout/fragment_profil_anak" />
 </navigation>
