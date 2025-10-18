@@ -20,7 +20,7 @@ class FileHelper (val context : Context) {
         try {
             val file = getFile()
             FileOutputStream(file, true).use { output ->
-                output.write(data.toByteArray())
+                output.write((data+"\n").toByteArray())
             }
         }
         catch (e: IOException) {
@@ -41,7 +41,6 @@ class FileHelper (val context : Context) {
         return getFile().delete()
     }
 
-    // Menghasilkan string path menuju file
     fun getFilePath(): String {
         return getFile().absolutePath
     }

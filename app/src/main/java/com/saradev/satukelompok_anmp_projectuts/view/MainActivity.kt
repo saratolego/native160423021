@@ -1,4 +1,4 @@
-package com.saradev.satukelompok_anmp_projectuts.view.view
+package com.saradev.satukelompok_anmp_projectuts.view
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
