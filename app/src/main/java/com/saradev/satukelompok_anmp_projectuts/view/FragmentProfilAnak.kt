@@ -25,18 +25,15 @@ class FragmentProfilAnak : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         viewModel = ViewModelProvider(this).get(ListViewModel::class.java)
-        observeViewModel()
+        binding.viewModel = viewModel
+        binding.lifecycleOwner = viewLifecycleOwner
+        binding.radioGroup.setOnCheckedChangeListener { _, checkedId ->
+            viewModel.jenisKelaminId.value = checkedId
+        }
 
-        binding.btnSimpan.setOnClickListener {
-            val nama = binding.editTxtNama.text.toString()
-            val tglLahir = binding.editTxtDob.text.toString()
-            val idJenisKelamin = binding.radioGroup.checkedRadioButtonId
-
-            viewModel.saveProfileData(nama, tglLahir, idJenisKelamin)
-
-            Toast.makeText(requireContext(), "Profil disimpan", Toast.LENGTH_SHORT).show()
+        viewModel.jenisKelaminId.observe(viewLifecycleOwner) { id ->
+            if (id != -1) binding.radioGroup.check(id)
         }
     }
 
@@ -44,14 +41,15 @@ class FragmentProfilAnak : Fragment() {
         viewModel.namaProfil.observe(viewLifecycleOwner) { nama ->
             binding.editTxtNama.setText(nama)
         }
-
         viewModel.tglLahirProfil.observe(viewLifecycleOwner) { tglLahir ->
             binding.editTxtDob.setText(tglLahir)
         }
-
         viewModel.jenisKelaminId.observe(viewLifecycleOwner) { idJenisKelamin ->
             if (idJenisKelamin != -1) {
-                binding.radioGroup.check(idJenisKelamin)
+                val radioButtonView = binding.radioGroup.findViewById<View>(idJenisKelamin)
+                if (radioButtonView != null) {
+                    binding.radioGroup.check(idJenisKelamin)
+                }
             }
         }
     }

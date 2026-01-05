@@ -1,79 +1,82 @@
 package com.saradev.satukelompok_anmp_projectuts.viewmodel
 
 import android.app.Application
-import android.content.Context
-import android.content.SharedPreferences
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.saradev.satukelompok_anmp_projectuts.model.Measurement
-import com.ubaya.anmp_week3.util.FileHelper
+import com.saradev.satukelompok_anmp_projectuts.model.MeasurementDatabase
+import com.saradev.satukelompok_anmp_projectuts.model.Profile
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class ListViewModel(application: Application) :
-    AndroidViewModel(application) {
-        private val fileHelper = FileHelper(getApplication())
+class ListViewModel(application: Application) : AndroidViewModel(application) {
+
     val measurements = MutableLiveData<List<Measurement>>()
+
+    val namaProfil = MutableLiveData<String>("")
+    val tglLahirProfil = MutableLiveData<String>("")
+    val jenisKelaminId = MutableLiveData<Int>(-1)
+
+    val inputAge = MutableLiveData<String>("")
+    val inputHeight = MutableLiveData<String>("")
+    val inputWeight = MutableLiveData<String>("")
+
+    private fun getDb(): MeasurementDatabase {
+        return MeasurementDatabase.invoke(getApplication())
+    }
 
     fun loadMeasurementData() {
         viewModelScope.launch(Dispatchers.IO) {
-        val rawData = fileHelper.readFromFile()
+            val db = getDb()
+            val dataList = db.measurementDao().selectAllMeasurements()
+            measurements.postValue(dataList)
+        }
+    }
 
-        val dataList = mutableListOf<Measurement>()
-        val lines = rawData.split('\n')
+    fun addMeasurementData() {
+        val age = inputAge.value ?: ""
+        val height = inputHeight.value ?: ""
+        val weight = inputWeight.value ?: ""
 
-        lines.forEach { line ->
-            if (line.isNotBlank()) {
-                val parts = line.split(",")
-                if (parts.size == 3) {
-                    dataList.add(Measurement(parts[0], parts[1], parts[2]))
-                }
+        if (age.isNotEmpty() && height.isNotEmpty() && weight.isNotEmpty()) {
+            viewModelScope.launch(Dispatchers.IO) {
+                val newMeasurement = Measurement(age, height, weight)
+                getDb().measurementDao().insertAll(newMeasurement)
+
+                inputAge.postValue("")
+                inputHeight.postValue("")
+                inputWeight.postValue("")
+
+                loadMeasurementData()
             }
         }
-        measurements.postValue(dataList)}
     }
-    fun addMeasurementData(age: String, height: String, weight: String) {
-        if (age.isBlank() || height.isBlank() || weight.isBlank()) {
-            return
+
+    fun saveProfileData() {
+        val nama = namaProfil.value ?: ""
+        val tgl = tglLahirProfil.value ?: ""
+        val jk = jenisKelaminId.value ?: -1
+
+        viewModelScope.launch(Dispatchers.IO) {
+            val profile = Profile(id = 1, nama = nama, tglLahir = tgl, jenisKelamin = jk)
+            getDb().profileDao().insertOrUpdate(profile)
         }
-        val dataLine = "$age,$height,$weight"
-        fileHelper.writeToFile(dataLine)
-        Log.d("print_file", fileHelper.getFilePath())   
     }
 
-    private val PREFS_NAME = "profil_anak_prefs"
-    private val KEY_NAMA = "key_nama"
-    private val KEY_TGL_LAHIR = "key_tgl_lahir"
-    private val KEY_JENIS_KELAMIN_ID = "key_jenis_kelamin_id"
-
-    private val sharedPrefs: SharedPreferences
-
-    val namaProfil = MutableLiveData<String>()
-    val tglLahirProfil = MutableLiveData<String>()
-    val jenisKelaminId = MutableLiveData<Int>()
+    fun loadProfileData() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val profile = getDb().profileDao().getProfile()
+            if (profile != null) {
+                namaProfil.postValue(profile.nama)
+                tglLahirProfil.postValue(profile.tglLahir)
+                jenisKelaminId.postValue(profile.jenisKelamin)
+            }
+        }
+    }
 
     init {
-        sharedPrefs = application.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         loadProfileData()
+        loadMeasurementData()
     }
-    fun saveProfileData(nama: String, tglLahir: String, idJenisKelamin: Int) {
-        val editor = sharedPrefs.edit()
-        editor.putString(KEY_NAMA, nama)
-        editor.putString(KEY_TGL_LAHIR, tglLahir)
-        editor.putInt(KEY_JENIS_KELAMIN_ID, idJenisKelamin)
-        editor.apply()
-
-        namaProfil.value = nama
-        tglLahirProfil.value = tglLahir
-        jenisKelaminId.value = idJenisKelamin
-    }
-
-    private fun loadProfileData() {
-        namaProfil.value = sharedPrefs.getString(KEY_NAMA, "") ?: ""
-        tglLahirProfil.value = sharedPrefs.getString(KEY_TGL_LAHIR, "") ?: ""
-        jenisKelaminId.value = sharedPrefs.getInt(KEY_JENIS_KELAMIN_ID, -1)
-    }
-    }
-
+}
