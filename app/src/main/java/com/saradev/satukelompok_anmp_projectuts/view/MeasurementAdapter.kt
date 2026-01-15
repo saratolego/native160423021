@@ -25,10 +25,8 @@ class MeasurementAdapter(private var dataList: List<Measurement>) :
 
     override fun onBindViewHolder(holder: MeasurementViewHolder, position: Int) {
         val measurement = dataList[position]
-        holder.binding.tvAge.text = measurement.age.toString()
-        holder.binding.tvHeight.text = measurement.height.toString()
-        holder.binding.tvWeight.text = measurement.weight.toString()
-
+        holder.binding.measurement = measurement
+        holder.binding.executePendingBindings()
     }
 
     fun updateData(newData: List<Measurement>) {
